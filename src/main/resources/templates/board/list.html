@@ -48,6 +48,41 @@
 <main class="flex-shrink-0">
     <div class="container">
         <h2>掲示板</h2>
+        <div>総件数:<b th:text="${#lists.size(boards)}">100件</b></div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>タイトル</th>
+                <th>コンテンツ</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--/*-->
+            <tr>
+                <td>ID_a</td>
+                <td>タイトル１</td>
+                <td>コンテンツ１</td>
+            </tr>
+            <tr>
+                <td>ID_B</td>
+                <td>タイトルB</td>
+                <td>コンテンツB</td>
+            </tr>
+            <tr>
+                <td>ID_C</td>
+                <td>タイトルC</td>
+                <td>コンテンツC</td>
+            </tr>
+            <!--*/-->
+            <tr th:each="prod : ${boards}">
+                <td th:text="${prod.id}">ID_a</td>
+                <td th:text="${prod.title}">タイトル１</td>
+                <td th:text="${prod.content}">コンテンツ１</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="text-end"><button type="button" class="btn btn-success">書き込む</button></div>
     </div>
 </main>
 
