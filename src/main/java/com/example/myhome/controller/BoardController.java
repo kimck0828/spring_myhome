@@ -4,6 +4,10 @@ import com.example.myhome.model.Board;
 import com.example.myhome.repository.BoardRepository;
 import com.example.myhome.validator.BoardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,8 +33,16 @@ public class BoardController {
      * @return 掲示板一覧ページ
      */
     @GetMapping("/list")
-    public String list(Model model) {
-        List<Board> boards = boardRepository.findAll();
+    public String list(Model model,@PageableDefault(size = 3) Pageable pageable,
+                       @RequestParam(required = false, defaultValue = "") String searchText) {
+        Page<Board> boards = boardRepository.findByTitleContainingOrContentContaining(searchText, searchText, pageable);
+
+        int startPage = Math.max(1, boards.getPageable().getPageNumber() -4);
+        int endPage = Math.min(boards.getPageable().getPageNumber() + 4, boards.getTotalPages());
+
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        
         model.addAttribute("boards", boards);
         return "board/list";
     }
@@ -47,7 +59,7 @@ public class BoardController {
         if ( id == null) {
             board = new Board();
         } else {
-            board = boardRepository.findById(id).orElse(null);
+            board = boardRepository.findById(id).orElse(new Board());
         }
         model.addAttribute("board", board);
         return "board/form";
