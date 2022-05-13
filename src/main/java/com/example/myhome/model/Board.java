@@ -1,12 +1,10 @@
 package com.example.myhome.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -24,4 +22,15 @@ public class Board {
 
     @NotNull
     private String content;
+    
+    @ManyToOne
+    @JoinColumn(
+            // BOARDテーブルとUSERテーブルをJOINするBOARDテーブルカラム
+            name="user_id",
+            // BOARDテーブルとUSERテーブルをJOINするUSERテーブルカラム
+            // ※JOINカラムがPKの場合は省略出来る。（「referencedColumnName = "id"」がなくてもOK）
+            referencedColumnName = "id"
+    )
+    @JsonIgnore
+    private User user;
 }

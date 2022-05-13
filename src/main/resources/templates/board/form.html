@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head th:replace="fragments/common :: head('投稿')">
 </head>
 <body>
@@ -19,7 +19,8 @@
             <div class="mb-3">
                 <label for="title" class="form-label">タイトル</label>
                 <input type="text" class="form-control" id="title" placeholder="田中"
-                       th:field="*{title}" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'">
+                       th:field="*{title}" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'"
+                       th:disabled="${!boardOwnerIsMe}">
                 <div class="invalid-feedback" 
                      th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
                     タイトルが間違っている
@@ -28,20 +29,21 @@
             <div class="mb-3">
                 <label for="content" class="form-label">コンテンツ</label>
                 <textarea class="form-control" id="content" rows="3" placeholder="ここに投稿内容を書いてください"
-                          th:field="*{content}" th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'"></textarea>
+                          th:field="*{content}" th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'"
+                          th:readonly="${not boardOwnerIsMe}"></textarea>
                 <div class="invalid-feedback"
                      th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
                     内容が間違っている
                 </div>
             </div>
-            <div class="text-end">
-                <a typw="button" class="btn btn-warning" th:href="@{/board/list}">取消</a>
-                <button typw="submit" class="btn btn-primary">投稿</button>
+            <div class="text-end" th:if="${boardOwnerIsMe}">
+                <a type="button" class="btn btn-warning" th:href="@{/board/list}">取消</a>
+                <button type="submit" class="btn btn-primary">投稿</button>
             </div>
         </form>
     </div>
 </main>
 
-<footer class="footer mt-auto py-3 bg-light" th:insert="fragments/common :: footer">
+<footer class="footer mt-auto py-3 bg-light" th:insert="fragments/common :: footer" />
 </body>
 </html>

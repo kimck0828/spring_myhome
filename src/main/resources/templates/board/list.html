@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head th:replace="fragments/common :: head('掲示板＠')"></head>
 <body>
 
@@ -43,31 +43,13 @@
                 <th>作成者</th>
             </tr>
             </thead>
-            <tbody>
-            <!--/*-->
-            <tr>
-                <td>ID_a</td>
-                <td>タイトル１</td>
-                <td>田中</td>
-            </tr>
-            <tr>
-                <td>ID_B</td>
-                <td>タイトルB</td>
-                <td>橋本</td>
-            </tr>
-            <tr>
-                <td>ID_C</td>
-                <td>タイトルC</td>
-                <td>岡田</td>
-            </tr>
-            <!--*/-->
+             <!--*/-->
             <tr th:each="board : ${boards}">
                 <td th:text="${board.id}">ID_a</td>
                 <td><a href="#"
                        th:text="${board.title}" th:href="@{/board/form(id=${board.id})}">タイトル１</a></td>
-                <td>岡田</td>
+                <td th:text="${board.user.username}">岡田</td>
             </tr>
-            </tbody>
         </table>
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
@@ -89,6 +71,6 @@
     </div>
 </main>
 
-<footer class="footer mt-auto py-3 bg-light" th:insert="fragments/common :: footer"></body>
+<footer class="footer mt-auto py-3 bg-light" th:insert="fragments/common :: footer"/>
 </body>
 </html>
