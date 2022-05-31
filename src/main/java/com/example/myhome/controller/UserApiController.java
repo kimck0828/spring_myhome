@@ -1,24 +1,37 @@
 package com.example.myhome.controller;
 
+import com.example.myhome.config.WebSecurityConfig;
 import com.example.myhome.model.Board;
 import com.example.myhome.model.User;
 import com.example.myhome.repository.UserRepository;
+import com.example.myhome.service.UserService;
+import lombok.extern.slf4j.Slf4j;
+import org.mariadb.jdbc.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+// SLF4Jログライブラリを使用する（LOMBOKの機能）
+@Slf4j
 public class UserApiController {
     
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
+    
     
     @GetMapping("/users")
     public List<User> getAll(){
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        log.debug(">>>呼び出し前");
+        log.debug(">>>サイズ：{}", users.get(0).getBoards().size());
+        log.debug(">>>呼び出し後");
+        return users;
     }
     
     @GetMapping("/users/{id}")
@@ -28,7 +41,10 @@ public class UserApiController {
     
     @PostMapping("/users")
     public User newUser(@RequestBody User user) {
-        return userRepository.save(user);
+//        if (user.getPassword() != null) {
+//            user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        }
+        return userService.save(user);
     }
     
     @PutMapping("/users/{id}")

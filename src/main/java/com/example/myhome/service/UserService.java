@@ -17,13 +17,21 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     
     public User save(User user) {
-        String password = passwordEncoder.encode(user.getPassword());
-        user.setPassword(password);
-        user.setEnabled(true);
-
-        Role role = new Role();
-        role.setId(1L);
-        user.getRoles().add(role);
+        // ★APIからも実行させるために修正
+        // パスワード暗号化
+        if ( user.getPassword() != null ) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        // 使用有無（デフォルト）
+        if ( user.getEnabled() == null ) {
+            user.setEnabled(true);
+        }
+        // ロール（デフォルト）
+        if ( user.getRoles().isEmpty() ) {
+            Role role = new Role();
+            role.setId(1L);
+            user.getRoles().add(role);
+        }
         return userRepository.save(user);
     }
 }
