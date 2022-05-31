@@ -8,6 +8,7 @@ import com.example.myhome.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.mariadb.jdbc.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,6 +65,7 @@ public class UserApiController {
                 });
     }
     
+    @Secured("ROLE_ADMIN") // ロール「ROLE_ADMIN」のみ実行可能
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable Long id) {
         userRepository.deleteById(id);

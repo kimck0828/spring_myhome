@@ -1,5 +1,5 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ja">
 <head th:replace="fragments/common :: head('投稿')">
 </head>
 <body>
@@ -8,6 +8,13 @@
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark"
          th:replace="fragments/common :: menu('board')">
     </nav>
+    <script>
+        function deleteBoard(id) {
+           fetch(`/api/boards/${id}`,{method: "DELETE"})
+           .then(res => {alert("削除されました"); window.location.href="/board/list";})
+           .catch(err=>alert("失敗しました。"));
+        }
+    </script>
 </header>
 
 <main class="flex-shrink-0">
@@ -20,7 +27,7 @@
                 <label for="title" class="form-label">タイトル</label>
                 <input type="text" class="form-control" id="title" placeholder="田中"
                        th:field="*{title}" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'"
-                       th:disabled="${!boardOwnerIsMe}">
+                >
                 <div class="invalid-feedback" 
                      th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
                     タイトルが間違っている
@@ -30,14 +37,17 @@
                 <label for="content" class="form-label">コンテンツ</label>
                 <textarea class="form-control" id="content" rows="3" placeholder="ここに投稿内容を書いてください"
                           th:field="*{content}" th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'"
-                          th:readonly="${not boardOwnerIsMe}"></textarea>
+                >
+                </textarea>
                 <div class="invalid-feedback"
                      th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
                     内容が間違っている
                 </div>
             </div>
-            <div class="text-end" th:if="${boardOwnerIsMe}">
-                <a type="button" class="btn btn-warning" th:href="@{/board/list}">取消</a>
+            <div class="text-end">
+                <a type="button" class="btn btn-primary" th:href="@{/board/list}">取消</a>
+                <button type="button" class="btn btn-warning"
+                    sec:authorize="hasRole('ROLE_ADMIN')" th:onclick="|deleteBoard(*{id})|">削除</button>
                 <button type="submit" class="btn btn-primary">投稿</button>
             </div>
         </form>

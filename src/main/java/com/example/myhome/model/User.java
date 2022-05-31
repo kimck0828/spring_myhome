@@ -25,13 +25,13 @@ public class User {
     @JoinTable(
             // 結合表（対象テーブルとの結合するためのテーブル）
             name="user_role",
-            // 結合表でBOARDテーブルの値になるカラム名
+            // 結合表でUSERテーブルの値になるカラム名
             joinColumns = @JoinColumn(name = "user_id"),
             // 結合表でROLEテーブルの値になるカラム名
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     // JSON出力対象外にする
-    @JsonIgnore
+//    @JsonIgnore
     private List<Role> roles = new ArrayList<>();
     
     @OneToMany(
