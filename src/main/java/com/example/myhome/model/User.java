@@ -31,7 +31,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     // JSON出力対象外にする
-//    @JsonIgnore
+    @JsonIgnore
     private List<Role> roles = new ArrayList<>();
     
     @OneToMany(
@@ -47,7 +47,7 @@ public class User {
             fetch = FetchType.LAZY
     )
     // JSON出力対象外にする
-//    @JsonIgnore
+    @JsonIgnore
     private List<Board> boards = new ArrayList<>();
 
 }

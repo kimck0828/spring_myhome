@@ -1,19 +1,15 @@
 package com.example.myhome.controller;
 
-import com.example.myhome.config.WebSecurityConfig;
 import com.example.myhome.model.Board;
+import com.example.myhome.model.QUser;
 import com.example.myhome.model.User;
 import com.example.myhome.repository.UserRepository;
 import com.example.myhome.service.UserService;
+import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
-import org.mariadb.jdbc.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 @RestController
 @RequestMapping("/api")
 // SLF4Jログライブラリを使用する（LOMBOKの機能）
@@ -25,13 +21,34 @@ public class UserApiController {
     @Autowired
     private UserService userService;
     
-    
     @GetMapping("/users")
-    public List<User> getAll(){
-        List<User> users = userRepository.findAll();
-        log.debug(">>>呼び出し前");
-        log.debug(">>>サイズ：{}", users.get(0).getBoards().size());
-        log.debug(">>>呼び出し後");
+    public Iterable<User> getAll(@RequestParam(required = false) String method,
+                             @RequestParam(required = false) String text){
+        Iterable<User> users = null;
+        if ( "query".equals(method) ) {
+            users = userRepository.findByUsernameQuery(text);
+        }
+        else if ( "native".equals(method) ) {
+            users = userRepository.findByUsernameNativeQuery(text);
+        }
+        else if ( "querydsl".equals(method) ) {
+            QUser user = QUser.user;
+            
+            // textが含まれている＋BOARDテーブルにデータがない
+//            Predicate predicate = user.username.contains(text)
+//                    .isTrue().and(user.boards.isNotEmpty());
+            Predicate predicate = user.username.contains(text);
+            users = userRepository.findAll(predicate);
+        }
+        else if ( "querydslCustom".equals(method) ) {
+            users = userRepository.findByUsernameNativeQuery(text);
+        }
+        else if ( "querydslCustomJdbc".equals(method) ) {
+            users = userRepository.findByUsernameCustomJdbc(text);
+        }
+        else {
+            users = userRepository.findAll();
+        }
         return users;
     }
     
